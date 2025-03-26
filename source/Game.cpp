@@ -12,10 +12,15 @@ void Game::initVariables() {
     float enemySpawnTimer;
     float enemySpawnTimerMax;
     unsigned int maxEnemies; 
+
+
     this -> points = 0;
     this -> enemySpawnTimerMax = 1000.f;
     this -> enemySpawnTimer = this -> enemySpawnTimerMax;
     this -> maxEnemies = 5;
+    this -> mouseHeld = false;
+    this -> health = 100;
+    this -> endGame = false;
 }
 
 void Game::initWindow() {
@@ -30,7 +35,7 @@ void Game::initEnemies(){
     this -> enemy.setSize(sf::Vector2f(50.f, 50.f));
 
     this -> enemy.setOutlineColor(sf::Color(5, 15, 30));
-    this -> enemy.setOutlineThickness(5.f);
+    this -> enemy.setOutlineThickness(3.f);
 }
 
 // Constructors / Destructors
@@ -60,6 +65,10 @@ void Game::spawnEnemy(){
 
 }
 
+const bool Game::getEndGame() const
+{
+    return this -> endGame;
+}
 
 void Game::pollEvents() {
     while (this->window->pollEvent(this->ev)) {
@@ -82,60 +91,70 @@ void Game::updateMousePos(){
     this -> mousePosView = this -> window ->mapPixelToCoords(this -> mousePosWindow);
 }
 
-void Game::updateEnemies(){
-    if(this -> enemies.size() < this -> maxEnemies){
-        if(this -> enemySpawnTimer >= this -> enemySpawnTimerMax){
-            this -> spawnEnemy();
-            this -> enemySpawnTimer = this -> enemySpawnTimerMax;
-        }
-        else{
-            this -> enemySpawnTimer += 1.f;
-        }
-    }
-    // misca inamicii
-    for(int i = 0; i < this -> enemies.size(); i++){
-        
-        bool deleted = false;
-        this -> enemies[i].move(0.f, 2.f);
-    
-
-    /// cursor pe inamici -> dispar
-    for (size_t i = 0; i < this->enemies.size(); i++) {
-        if (this->enemies[i].getGlobalBounds().contains(this->mousePosView)) {
-            this -> enemies.erase(this -> enemies.begin() + i);
-            /// increment the points on each enemy killed
-            this -> points += 1.f;
-
-
-            i--;    // Adjust index after erasing an element
-            std::cout << this -> points << std::endl;
+void Game::updateEnemies() {
+    if (this->enemies.size() < this->maxEnemies) {
+        if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
+            this->spawnEnemy();
+            this->enemySpawnTimer = this->enemySpawnTimerMax;
+        } else {
+            this->enemySpawnTimer += 1.f;
         }
     }
 
-    /// click pe inamici -> dispar
-    /*if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-        if(this -> enemies[i].getGlobalBounds().contains(this -> mousePosView)){
-            this -> enemies.erase(this -> enemies.begin() + i);
-            this -> points += 1.f;    
+    // mișcă inamicii
+    for (int i = 0; i < this->enemies.size(); i++) {
+        this->enemies[i].move(0.f, 2.f);
 
+        // elimina inamicii când au depășit ecranul
+        if (this->enemies[i].getPosition().y > this->window->getSize().y) {
+
+            this->health -= 10;
+            std::cout << "hp: " << this->health << std::endl;
+            
+
+            this->enemies.erase(this->enemies.begin() + i);
+
+            i--;
         }
-    }*/
+    }
 
-    // elimina inamicii cand au depasit ecranul
-
-        if(this -> enemies[i].getPosition().y > this -> window -> getSize().y){
-            this -> enemies.erase(this -> enemies.begin() + i);
+    // click pe inamici -> dispar
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (this->mouseHeld == false) {
+            this->mouseHeld = true;
+            bool deleted = false;
+            for (size_t i = 0; i < this->enemies.size() && deleted == false; i++) {
+                if (this->enemies[i].getGlobalBounds().contains(this->mousePosView)) {
+                    deleted = true;
+                    this->enemies.erase(this->enemies.begin() + i);
+                    this->points += 1;
+                    std::cout << "pts: " << this->points << std::endl;
+                }
+            }
         }
+    } else {
+        this->mouseHeld = false;
     }
 }
+
+    
+
+
 
 void Game::update(){
 
     this -> pollEvents();
 
-    this -> updateMousePos();
+    if(!this -> endGame){
     
-    this -> updateEnemies();
+        this -> updateMousePos();
+    
+        this -> updateEnemies();
+    }
+    // sfarsit joc
+    if(this -> health == 0){
+        this -> endGame = true;
+    }
 }
 
 
