@@ -23,10 +23,13 @@ private:
     sf::Vector2f mousePosView;
 
     /// elemente joc
-    int points;
+    bool endGame;
+    unsigned points;
+    int health;
     float enemySpawnTimer;
     float enemySpawnTimerMax;
     unsigned int maxEnemies;
+    bool mouseHeld;
 
     /// dec. inamici
     std::vector<sf::RectangleShape> enemies;
@@ -46,6 +49,7 @@ public:
 
     /// accessors
     const bool running() const;
+    const bool getEndGame() const;
 
     /// functii
     void spawnEnemy();
@@ -63,3 +67,4 @@ public:
         return window;
     }
 };
+
