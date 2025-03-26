@@ -2,21 +2,21 @@
 #include "Game.h"
 
 int main() {
-    // NR RANDOM
+    /// nr random
     std::srand(static_cast<unsigned>(time(NULL)));
 
 
-    // INIT GAME ENGINE
+    /// init joc
     Game game;
 
-    // Game Loop1d3
+    /// game loop
     while (game.running()) {
-        // Update
+        /// update
         
         game.update();
 
         
-        // Render
+        /// render
         game.render();
     }
 
