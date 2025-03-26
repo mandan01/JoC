@@ -13,41 +13,41 @@
 
 class Game {
 private:
-    // WINDOW
+    /// window
     sf::RenderWindow* window;
     sf::Event ev;
     sf::VideoMode videomode;
 
-    // MOUSE POSITION
+    /// pozitie mouse
     sf::Vector2i mousePosWindow;
     sf::Vector2f mousePosView;
 
-    // GAME LOGIC
+    /// elemente joc
     int points;
     float enemySpawnTimer;
     float enemySpawnTimerMax;
     unsigned int maxEnemies;
 
-    // GAME OBJECTS
+    /// dec. inamici
     std::vector<sf::RectangleShape> enemies;
 
     sf::RectangleShape enemy;
 
 
-    // Private Functions
+    /// functii
     void initVariables();
     void initWindow();
     void initEnemies();
 
 public:
-    // Constructors / Destructors
+    /// constructors / destructors
     Game();
     virtual ~Game();
 
-    // Accessors
+    /// accessors
     const bool running() const;
 
-    // Functions
+    /// functii
     void spawnEnemy();
 
     void pollEvents();
@@ -58,7 +58,7 @@ public:
     void renderEnemies();
     void render();
 
-    // Getter for window (added to access window from main.cpp)
+    /// getter for window (added to access window from main.cpp)
     sf::RenderWindow* getWindow() {
         return window;
     }
