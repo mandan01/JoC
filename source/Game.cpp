@@ -3,11 +3,11 @@
 #include <iostream>
 
 
-// Private functions
+/// functii private
 void Game::initVariables() {
     this->window = nullptr;
     
-    //GAME LOGIC
+    /// elemente joc
     int points;
     float enemySpawnTimer;
     float enemySpawnTimerMax;
@@ -28,9 +28,9 @@ void Game::initWindow() {
 void Game::initEnemies(){
     this -> enemy.setPosition(375.f, 275.f);
     this -> enemy.setSize(sf::Vector2f(50.f, 50.f));
-    this -> enemy.setFillColor(sf::Color::Cyan);
-    this -> enemy.setOutlineColor(sf::Color::Black);
-    this -> enemy.setOutlineThickness(1);
+
+    this -> enemy.setOutlineColor(sf::Color(5, 15, 30));
+    this -> enemy.setOutlineThickness(5.f);
 }
 
 // Constructors / Destructors
@@ -49,13 +49,13 @@ const bool Game::running() const {
     return this->window->isOpen();
 }
 
-// Functions
+// functii
 void Game::spawnEnemy(){
     this -> enemy.setPosition(
         static_cast<float>(rand() % static_cast<int> (this -> window -> getSize().x - this -> enemy.getSize().x)),
         0.f
     );
-    this -> enemy.setFillColor(sf::Color::Green);
+    this -> enemy.setFillColor(sf::Color(255, 0, 255));
     this -> enemies.push_back(this -> enemy);
 
 }
@@ -94,19 +94,42 @@ void Game::updateEnemies(){
     }
     // misca inamicii
     for(int i = 0; i < this -> enemies.size(); i++){
-        this -> enemies[i].move(0.f, 1.f);
-    }    
+        
+        bool deleted = false;
+        this -> enemies[i].move(0.f, 2.f);
+    
 
-    // verifica daca se da click pe un inamic
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+    /// cursor pe inamici -> dispar
+    for (size_t i = 0; i < this->enemies.size(); i++) {
+        if (this->enemies[i].getGlobalBounds().contains(this->mousePosView)) {
+            this -> enemies.erase(this -> enemies.begin() + i);
+            /// increment the points on each enemy killed
+            this -> points += 1.f;
 
+
+            i--;    // Adjust index after erasing an element
+            std::cout << this -> points << std::endl;
+        }
     }
 
+    /// click pe inamici -> dispar
+    /*if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+        if(this -> enemies[i].getGlobalBounds().contains(this -> mousePosView)){
+            this -> enemies.erase(this -> enemies.begin() + i);
+            this -> points += 1.f;    
+
+        }
+    }*/
+
     // elimina inamicii cand au depasit ecranul
-    // if(this -> enemy.getPosition().y > this -> window -> )
+
+        if(this -> enemies[i].getPosition().y > this -> window -> getSize().y){
+            this -> enemies.erase(this -> enemies.begin() + i);
+        }
+    }
 }
 
-void Game::update() {
+void Game::update(){
 
     this -> pollEvents();
 
@@ -123,8 +146,7 @@ void Game::renderEnemies(){
 }
 
 void Game::render() {
-    // Clear old frame and render objects
-    this->window->clear(sf::Color(0, 0, 0));
+    this->window->clear(sf::Color(50, 205, 50));
 
     // Draw game objects
     this -> renderEnemies();
