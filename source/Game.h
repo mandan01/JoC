@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+#include <sstream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -22,7 +23,18 @@ private:
     sf::Vector2i mousePosWindow;
     sf::Vector2f mousePosView;
 
+    /// font
+    sf::Font font;
+
+    /// text
+    sf::Text text;
+    sf::Text gameOverText;  
+
+    
+
+    
     /// elemente joc
+    bool gameOverDisplayed; 
     bool endGame;
     unsigned points;
     int health;
@@ -37,10 +49,12 @@ private:
     sf::RectangleShape enemy;
 
 
-    /// functii
+    /// functii private
     void initVariables();
     void initWindow();
     void initEnemies();
+    void initFonts();
+    void initText();
 
 public:
     /// constructors / destructors
@@ -53,13 +67,15 @@ public:
 
     /// functii
     void spawnEnemy();
-
+    void restartGame();
     void pollEvents();
     void updateMousePos();
+    void updateText();
     void updateEnemies();
     void update();
 
-    void renderEnemies();
+    void renderText(sf::RenderTarget& target);
+    void renderEnemies(sf::RenderTarget& targer);
     void render();
 
     /// getter for window (added to access window from main.cpp)
@@ -67,4 +83,3 @@ public:
         return window;
     }
 };
-
